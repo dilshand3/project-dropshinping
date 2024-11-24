@@ -6,25 +6,44 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     email: {
-        type: String
+        type: String,
+        required: true,
+        unique: true
     },
     isAdmin: {
         type: Boolean,
         default: false
     },
     password: {
-        type: String
+        type: String,
+        required: true
     },
     isVerified: {
         type: Boolean,
         default: false
     },
-    verifyToken: {
+    lastLogin: {
+        type: Date,
+        default: null
+    },
+    VerificationCode: {
         type: String,
     },
-    verifyTokenExpiry: {
+    VerificationCodeExpiry: {
+        type: Date,
+    },
+    ResetPasswordCode: {
+        type: String
+    },
+    ResetPasswordCodeExpiry: {
+        type: Date
+    },
+    UpdateVerificationCode: {
+        type: String,
+    },
+    UpdateVerificationCodeExpiry: {
         type: Date,
     }
-})
+});
 
 export const User = mongoose.model("User", userSchema);
