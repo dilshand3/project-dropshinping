@@ -165,41 +165,79 @@ const updateUserDetail = asyncHandler(async (req, res) => {
     const { username, password, email } = req.body;
     const reqUser = req.userId; // Assuming the user ID is attached to the request object
 
-    // Fetch the user from the database
     const user = await User.findById(reqUser);
     if (!user) {
         return res.status(400).json({ success: false, message: "User not found" });
     }
 
-    // Validate the current password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        return res.status(400).json({ success: false, message: "Wrong Password" });
-    }
-
-    // Update the username if provided
     if (username && username !== user.username) {
         user.username = username;
     }
 
-    // Update the email if provided and check for changes
     if (email && email !== user.email) {
         user.email = email;
-        user.isVerified = false; // Mark the email as unverified if it has changed
-    } else if (email === user.email) {
-        user.isVerified = true; // Keep `isVerified` as true if the email hasn't changed
+        user.isVerified = false;
+        const UpdateVerificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        user.UpdateVerificationCode = UpdateVerificationCode;
+        user.UpdateVerificationCodeExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes expiry
+        await sendUpdatedDetailEmail(user.email, UpdateVerificationCode, user.username);
     }
 
-    // Save the updated user
-    const updatedUser = await user.save();
-
-    // Send a notification if required
-    if (email && email !== user.email) {
-        await sendUpdatedDetailEmail(email); // Assuming you have a function to handle this
-    }
-
-    res.status(200).json({ success: true, data: updatedUser });
+    await user.save();
+    res.status(200).json({ success: true, message: "Verification code sent to email" });
 });
 
+const verifyUpdate = asyncHandler(async (req, res) => {
+    const { code } = req.body;
+    const user = await User.findOne({
+        UpdateVerificationCode: code,
+        UpdateVerificationCodeExpiry: { $gt: Date.now() }
+    });
 
-export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail }
+    if (!user) {
+        return res.status(400).json({ success: false, message: "Invalid or expired verification code" });
+    }
+
+    user.isVerified = true;
+    user.UpdateVerificationCode = undefined;
+    user.UpdateVerificationCodeExpiry = undefined;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Details updated successfully" });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+    const { Id } = req.body;
+    try {
+        await User.findByIdAndDelete(Id)
+    } catch (error) {
+        res.status(400).json({ succes: false, message: "can't delete user" })
+    }
+    res.status(200).json({ succes: true, message: "user deleted succes fully" })
+});
+
+const shareAllUser = asyncHandler(async (req, res) => {
+    const allUser = await User.find();
+    try {
+        res.status(200).json({ success: true, message: "user send succesfully", data: allUser })
+    } catch (error) {
+        res.status(400).json({ success: false, message: "can't send user something went wrong while sending user" })
+    }
+})
+
+const searchUserByUsername = asyncHandler(async (req, res) => {
+    const { username } = req.body; 
+
+    if (!username) {
+        return res.status(400).json({ success: false, message: "Username is required" });
+    }
+
+    try {
+        const users = await User.find({ username: new RegExp(username, 'i') }); 
+        res.status(200).json({ success: true, message: "Users fetched successfully", data: users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Error fetching users" });
+    }
+});
+
+export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername }

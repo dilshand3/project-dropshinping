@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/VerifyToken.middleware.js";
-import { registerUser,verifyUser,loginUser, logoutUser, toggleAdmin,forgotPassword,resetPassword,updateUserDetail } from "../controller/user.controller.js";
+import { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername } from "../controller/user.controller.js";
 
 const router = Router();
 router.route("/signup").post(registerUser);
@@ -10,6 +10,10 @@ router.route("/logout").post(logoutUser);
 router.route("/setrole").post(toggleAdmin);
 router.route("/forgotpassword").post(forgotPassword);
 router.route("/resetpassword").post(resetPassword);
-router.route("/profilereq").post(verifyToken,updateUserDetail)
+router.route("/profilereq").post(verifyToken, updateUserDetail);
+router.route("/verifyupdate").post(verifyUpdate);
+router.route("/deleteuser").post(deleteUser);
+router.route("/shareuser").get(shareAllUser);
+router.route("/searchuser").post(searchUserByUsername);
 
 export default router;

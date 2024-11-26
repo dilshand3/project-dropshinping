@@ -71,7 +71,7 @@ export const sendPasswordVerificationEmail = async (email, ResetPasswordCode, us
     }
 }
 
-export const sendUpdatedDetailEmail = async ( username) => {
+export const sendUpdatedDetailEmail = async (email, UpdateVerificationCode, username) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -84,8 +84,8 @@ export const sendUpdatedDetailEmail = async ( username) => {
         const mailOptions = {
             from: process.env.ADMIN_EMAIL,
             to: email,
-            subject: 'Email verification',
-            html: UPDATEDDETAIL_TEMPLTATE.replace('{{username}}', username),
+            subject: 'Update Verification',
+            html: UPDATEDDETAIL_TEMPLTATE.replace('{{VERIFICATION_CODE}}', UpdateVerificationCode).replace('{{username}}', username),
             replyTo: 'no-reply@example.com'
         };
 

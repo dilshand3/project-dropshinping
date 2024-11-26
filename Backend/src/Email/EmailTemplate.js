@@ -50,16 +50,19 @@ export const UPDATEDDETAIL_TEMPLTATE = `
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Verification</title>
+    <title>Update Verification</title>
 </head>
 <body style="font-family: Arial, sans-serif; background-color: #0b111e; margin: 0; padding: 0; color: #f0f2f4;">
     <div style="max-width: 600px; margin: 0 auto; background-color:#0b111e; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h1 style="color:#a395e9; text-align: center;">user detail updatedtion</h1>
+        <h1 style="color:#a395e9; text-align: center;">Update Verification</h1>
         <p style="color:#f0f2f4; font-size: 16px; line-height: 1.6;">Hello, {{username}}</p>
-        <p style="color:#f0f2f4; font-size: 16px; line-height: 1.6;">There is req of updating user detail , please use the Reset password verification code below:</p>
+        <p style="color:#f0f2f4; font-size: 16px; line-height: 1.6;">Please use the verification code below to confirm your updated details:</p>
 
-        <p style="color:#f0f2f4; font-size: 16px; line-height: 1.6;">This code will expire in 5 minute. If you did not request this, please ignore this email.</p>
+        <div style="font-size: 24px; font-weight: bold; color:#a395e9; text-align: center; margin: 20px 0;">{{VERIFICATION_CODE}}</div>
+
+        <p style="color:#f0f2f4; font-size: 16px; line-height: 1.6;">This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>
         <p style="text-align: center; margin-top: 20px; font-size: 12px; color:#f0f2f4;">Thank you!<br />Developer Dilshan</p>
     </div>
 </body>
-</html>`
+</html>
+`
