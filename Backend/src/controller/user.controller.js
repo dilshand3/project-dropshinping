@@ -10,6 +10,11 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new Error("All fields are required");
     }
 
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+        return res.status(400).json({success: false,message:"Username already exists"});
+    }
+
     const existedUser = await User.findOne({
         $or: [{ email }]
     });
@@ -72,18 +77,21 @@ const verifyUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    const { emailOrUsername, password } = req.body;
+
     const user = await User.findOne({
-        email,
+        $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
         isVerified: true
     });
+
     if (!user) {
-        return res.status(400).json({ success: false, message: "account hi nhi hai" });
+        return res.status(400).json({ success: false, message: "Account does not exist" });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-        return res.status(400).json({ success: false, message: "ex name yaad hai password nhi" });
+        return res.status(400).json({ success: false, message: "Incorrect password" });
     }
 
     await generateTokenAndSetCookie(res, user._id);
@@ -239,5 +247,9 @@ const searchUserByUsername = asyncHandler(async (req, res) => {
         res.status(500).json({ success: false, message: "Error fetching users" });
     }
 });
+
+const addProfileImage = asyncHandler(async(req,res) => {
+    const ProfileImageLocal = await req.files?.ProfileImageLocal?.[0].path;
+})
 
 export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername }
