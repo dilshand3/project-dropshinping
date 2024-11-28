@@ -3,6 +3,7 @@ import { User } from "../model/user.model.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import { sendVerificationEmail, sendPasswordVerificationEmail, sendUpdatedDetailEmail } from "../Email/Email.js";
 import { generateTokenAndSetCookie } from "../utils/generateToken&setCokiee.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password, isAdmin } = req.body;
@@ -12,7 +13,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-        return res.status(400).json({success: false,message:"Username already exists"});
+        return res.status(400).json({ success: false, message: "Username already exists" });
     }
 
     const existedUser = await User.findOne({
@@ -234,22 +235,50 @@ const shareAllUser = asyncHandler(async (req, res) => {
 })
 
 const searchUserByUsername = asyncHandler(async (req, res) => {
-    const { username } = req.body; 
+    const { username } = req.body;
 
     if (!username) {
         return res.status(400).json({ success: false, message: "Username is required" });
     }
 
     try {
-        const users = await User.find({ username: new RegExp(username, 'i') }); 
+        const users = await User.find({ username: new RegExp(username, 'i') });
         res.status(200).json({ success: true, message: "Users fetched successfully", data: users });
     } catch (error) {
         res.status(500).json({ success: false, message: "Error fetching users" });
     }
 });
 
-const addProfileImage = asyncHandler(async(req,res) => {
-    const ProfileImageLocal = await req.files?.ProfileImageLocal?.[0].path;
-})
+const completeProfile = asyncHandler(async (req, res) => {
+    const { age, gender } = req.body;
+    const requser = req.userId;
+    const user = await User.findById(requser);
 
-export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername }
+    if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const ProfileImageLocal = req.files?.profileImage?.[0]?.path;
+    if (!ProfileImageLocal) {
+        return res.status(400).json({ success: false, message: "Profile image not uploaded" });
+    }
+
+    if (age) user.age = age;
+    if (gender) user.gender = gender;
+
+    
+    if (ProfileImageLocal) {
+        try {
+            const profileImage = await uploadOnCloudinary(ProfileImageLocal);
+            user.profileImage = profileImage.url; 
+        } catch (error) {
+            return res.status(500).json({ success: false, message: "Error uploading profile image" });
+        }
+    }
+
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Profile updated successfully", data: user });
+});
+
+export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername,completeProfile }
