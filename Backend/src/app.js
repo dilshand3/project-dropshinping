@@ -9,7 +9,12 @@ const app = express()
 app.use(express.json({limit : "16kb"}));
 app.use(cookieParser())
 
+//user router 
 import userRouter from "./route/user.route.js";
-app.use("/api",userRouter)
+app.use("/api",userRouter);
+
+//product router
+import productRouter from "./route/product.route.js";
+app.use("/productApi",productRouter)
 
 export { app }
