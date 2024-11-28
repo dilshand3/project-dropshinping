@@ -15,6 +15,10 @@ app.use("/api",userRouter);
 
 //product router
 import productRouter from "./route/product.route.js";
-app.use("/productApi",productRouter)
+app.use("/productApi",productRouter);
+
+//cart route
+import cartRouter from "./route/cart.route.js";
+app.use("/cartApi",cartRouter);
 
 export { app }

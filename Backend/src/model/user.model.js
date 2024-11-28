@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     username: {
         type: String,
         required: true,
@@ -53,6 +53,31 @@ const userSchema = new mongoose.Schema({
     },
     UpdateVerificationCodeExpiry: {
         type: Date,
+    },
+    state: {
+        type: String
+    },
+    district: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    zipCode: {
+        type: String
+    },
+    address: {
+        type: String
+    },
+    PhoneNumber1: {
+        type: Number
+    },
+    PhoneNumber2: {
+        type: Number
+    },
+    cart: {
+        type: Schema.Types.ObjectId,
+        ref: "Cart"
     }
 });
 

@@ -266,11 +266,11 @@ const completeProfile = asyncHandler(async (req, res) => {
     if (age) user.age = age;
     if (gender) user.gender = gender;
 
-    
+
     if (ProfileImageLocal) {
         try {
             const profileImage = await uploadOnCloudinary(ProfileImageLocal);
-            user.profileImage = profileImage.url; 
+            user.profileImage = profileImage.url;
         } catch (error) {
             return res.status(500).json({ success: false, message: "Error uploading profile image" });
         }
@@ -281,4 +281,25 @@ const completeProfile = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Profile updated successfully", data: user });
 });
 
-export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername,completeProfile }
+const addAddress = asyncHandler(async (req, res) => {
+    const { state, district, city, zipCode, address, PhoneNumber1, PhoneNumber2 } = req.body;
+    const reqUser = req.userId;
+    const user = await User.findById(reqUser);
+    if (!user) {
+        return res.status(400).json({ success: false, message: "user didn't found" });
+    };
+    user.state = state;
+    user.district = district,
+        user.city = city,
+        user.zipCode = zipCode,
+        user.address = address,
+        user.PhoneNumber1 = PhoneNumber1
+    if (PhoneNumber2) {
+        user.PhoneNumber2 = PhoneNumber2
+    };
+
+    await user.save();
+    res.status(200).json({ success: true, message: "address added succesfully", data: user })
+});
+
+export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress }

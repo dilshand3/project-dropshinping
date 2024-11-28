@@ -39,4 +39,14 @@ const createProduct = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "product added successfully", data: addedProduct })
 });
 
-export { createProduct }
+const deleteProduct = asyncHandler(async(req,res) => {
+    const {Id} = req.body;
+    try {
+        await Product.findByIdAndDelete(Id);
+        res.status(200).json({success : true,message : "product deleted succesfully"})
+    } catch (error) {
+        return res.status(400).json({success : false,message : "product can't deleted"})
+    }
+});
+
+export { createProduct,deleteProduct }

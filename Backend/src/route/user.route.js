@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/VerifyToken.middleware.js";
-import { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile } from "../controller/user.controller.js";
+import { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress } from "../controller/user.controller.js";
 import { upload } from "../middleware/multer.milddlware.js";
 
 const router = Router();
@@ -21,5 +21,6 @@ router.route("/profilecomplete").post(
     upload.fields([{ name: "profileImage", maxCount: 1 }]),
     completeProfile
 );
+router.route("/addAdress").post(verifyToken,addAddress)
 
 export default router;
