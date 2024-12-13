@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { verifyToken } from "../middleware/VerifyToken.middleware.js";
-import { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress } from "../controller/user.controller.js";
+import { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress, checkUser } from "../controller/user.controller.js";
 import { upload } from "../middleware/multer.milddlware.js";
 
 const router = Router();
+router.route("/checkuser").get(verifyToken, checkUser);
 router.route("/signup").post(registerUser);
 router.route("/verifyuser").post(verifyUser);
 router.route("/login").post(loginUser);

@@ -302,4 +302,16 @@ const addAddress = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "address added succesfully", data: user })
 });
 
-export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress }
+const checkUser = asyncHandler(async (req, res) => {
+    const reqUser = req.userId;
+    if (!reqUser) {
+        throw new Error("Provide token to check user")
+    }
+    const user = await User.findById(reqUser).select("-password")
+    if (!user) {
+        return res.status(400).json({ success: false, message: "user not found" })
+    }
+    res.status(200).json({ success: true, message: "user found", data: user });
+});
+
+export { registerUser, verifyUser, loginUser, logoutUser, toggleAdmin, forgotPassword, resetPassword, updateUserDetail, verifyUpdate, deleteUser, shareAllUser, searchUserByUsername, completeProfile, addAddress, checkUser }

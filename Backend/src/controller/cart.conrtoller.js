@@ -1,7 +1,6 @@
 import { Cart } from "../model/cart.model.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 
-// Add item to cart
 const addItemToCart = asyncHandler(async (req, res) => {
     const { productId, quantity } = req.body;
     const userId = req.userId;
