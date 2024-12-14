@@ -2,9 +2,8 @@ import { Order } from "../model/order.model.js";
 import { asyncHandler } from "../utils/asynchandler.js";
 import { Cart } from "../model/cart.model.js";
 
-// Create a new order
 const createOrder = asyncHandler(async (req, res) => {
-    const { items, totalAmount } = req.body;
+    const { items, totalAmount,price } = req.body;
     const userId = req.userId;
 
     const order = new Order({
@@ -15,13 +14,11 @@ const createOrder = asyncHandler(async (req, res) => {
 
     await order.save();
 
-    // Clear the user's cart after order is created
     await Cart.deleteMany({ userId });
 
     res.status(201).json({ success: true, message: "Order created successfully", data: order });
 });
 
-// Get all orders for a user
 const getUserOrders = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
@@ -30,7 +27,7 @@ const getUserOrders = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Orders retrieved successfully", data: orders });
 });
 
-// Update order status
+
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { orderId, status } = req.body;
 
