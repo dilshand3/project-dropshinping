@@ -14,16 +14,15 @@ const addItemToCart = asyncHandler(async (req, res) => {
     const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
 
     if (itemIndex > -1) {
-        cart.items[itemIndex].quantity += quantity;
+        cart.items[itemIndex].quantity += Number(quantity);
     } else {
-        cart.items.push({ productId, quantity });
+        cart.items.push({ productId, quantity: Number(quantity) });
     }
 
     await cart.save();
     res.status(200).json({ success: true, message: "Item added to cart", data: cart });
 });
 
-// Remove item from cart
 const removeItemFromCart = asyncHandler(async (req, res) => {
     const { productId } = req.body;
     const userId = req.userId;
@@ -40,7 +39,6 @@ const removeItemFromCart = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Item removed from cart", data: cart });
 });
 
-// Get user's cart
 const getUserCart = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
