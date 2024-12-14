@@ -39,6 +39,32 @@ const removeItemFromCart = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Item removed from cart", data: cart });
 });
 
+const removeOneItemFromCart = asyncHandler(async (req, res) => {
+    const { productId } = req.body;
+    const userId = req.userId;
+
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+        return res.status(404).json({ success: false, message: "Cart not found" });
+    }
+
+    const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+
+    if (itemIndex > -1) {
+        if (cart.items[itemIndex].quantity > 1) {
+            cart.items[itemIndex].quantity -= 1;
+        } else {
+            cart.items.splice(itemIndex, 1);
+        }
+    } else {
+        return res.status(404).json({ success: false, message: "Item not found in cart" });
+    }
+
+    await cart.save();
+    res.status(200).json({ success: true, message: "Item quantity decreased by one", data: cart });
+});
+
 const getUserCart = asyncHandler(async (req, res) => {
     const userId = req.userId;
 
@@ -51,4 +77,4 @@ const getUserCart = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Cart retrieved successfully", data: cart });
 });
 
-export { addItemToCart, removeItemFromCart, getUserCart };
+export { addItemToCart, removeItemFromCart, getUserCart,removeOneItemFromCart };
