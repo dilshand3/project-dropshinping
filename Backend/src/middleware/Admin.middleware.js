@@ -1,8 +1,8 @@
-import {User} from "../model/user.model.js";
+import { User } from "../model/user.model.js";
 
 const isAdmin = async (req, res, next) => {
     try {
-        const userId = req.userId; 
+        const userId = req.userId;
         const user = await User.findById(userId);
 
         if (!user) {
@@ -13,7 +13,7 @@ const isAdmin = async (req, res, next) => {
             return res.status(403).json({ success: false, message: "Access denied. Admins only." });
         }
 
-        next(); 
+        next();
     } catch (error) {
         res.status(500).json({ success: false, message: "Server error" });
     }

@@ -31,6 +31,10 @@ const orderSchema = new Schema({
         type: String,
         enum: ["Pending", "Completed", "Cancelled"],
         default: "Pending"
+    },
+    trackingInfo: {
+        type: String,
+        default: ""
     }
 }, { timestamps: true });
 
