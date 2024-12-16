@@ -44,7 +44,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 });
 
 const getOrderDetails = asyncHandler(async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId } = req.body;
 
     const order = await Order.findById(orderId).populate("items.productId");
 
@@ -75,7 +75,7 @@ const cancelOrder = asyncHandler(async (req, res) => {
 });
 
 const trackOrder = asyncHandler(async (req, res) => {
-    const { orderId } = req.params;
+    const { orderId } = req.body;
 
     const order = await Order.findById(orderId);
 
@@ -91,7 +91,26 @@ const getPurchaseHistory = asyncHandler(async (req, res) => {
 
     const orders = await Order.find({ userId, status: "Completed" }).populate("items.productId");
 
+    if (!orders) {
+        return res.status(200).json({success: true,message:"No completed product purchasing"})
+    }
+
     res.status(200).json({ success: true, message: "Purchase history retrieved successfully", data: orders });
 });
 
-export { createOrder, getUserOrders, updateOrderStatus, getOrderDetails, cancelOrder, trackOrder, getPurchaseHistory };
+const updateTrackingInfo = asyncHandler(async (req, res) => {
+    const { orderId, trackingInfo } = req.body;
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    order.trackingInfo = trackingInfo;
+    await order.save();
+
+    res.status(200).json({ success: true, message: "Tracking information updated successfully", data: order });
+});
+
+export { createOrder, getUserOrders, updateOrderStatus, getOrderDetails, cancelOrder, trackOrder, getPurchaseHistory, updateTrackingInfo };
