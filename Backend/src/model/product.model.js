@@ -51,7 +51,11 @@ const productSchema = new Schema({
     salesCount: {
         type: Number,
         default: 0
+    },
+    cashOndelivery : {
+        type : Boolean,
+        default : false
     }
 }, { timestamps: true });
 
-export const Product = mongoose.model("Product", productSchema)
+export const Product = mongoose.model("Product", productSchema);

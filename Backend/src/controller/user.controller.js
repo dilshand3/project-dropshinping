@@ -79,7 +79,6 @@ const verifyUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
     const { emailOrUsername, password } = req.body;
-
     const user = await User.findOne({
         $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
         isVerified: true

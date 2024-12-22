@@ -3,7 +3,7 @@ import { Product } from "../model/product.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, description, detail, genderCategory, sessionalCategory, price, preBookingPrice } = req.body;
+    const { name, description, detail, genderCategory, sessionalCategory, price, preBookingPrice,cashOndeliver } = req.body;
     if (!name || !description || !detail || !genderCategory || !sessionalCategory || !price || !preBookingPrice) {
         return res.status(400).json({ success: false, message: "all detail required" })
     };
@@ -32,7 +32,8 @@ const createProduct = asyncHandler(async (req, res) => {
         ProductImage: ProductImage.url,
         price: numericPrice,
         preBookingPrice: numericPreBookingPrice,
-        SellingPrice
+        SellingPrice,
+        cashOndelivery
     });
 
     const addedProduct = await NewProduct.save();

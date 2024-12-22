@@ -35,4 +35,8 @@ app.use("/orderApi", orderRouter);
 import megaAdsRouter from "./route/MegaAds.route.js";
 app.use("/megaAdsApi", megaAdsRouter);
 
+// payment route
+import paymentRouter from "./route/payment.route.js";
+app.use("/paymentApi", paymentRouter);
+
 export { app }
